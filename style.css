@@ -1,0 +1,91 @@
+/* style.css — تصميم عصري ممتد full-width، Grid على Desktop، قائمة عمودية على الجوال */
+
+:root{
+  --bg: #f5f6f8;
+  --text: #222;
+  --muted: #6b6b6b;
+  --card-bg: #fff;
+  --accent: #222;
+  --radius: 12px;
+  --gap: 18px;
+  --max-width: 1200px;
+  --cover-height: 320px; /* متوسط */
+  --content-width: 720px;
+}
+[data-theme="dark"]{
+  --bg: #0f1114;
+  --text: #e6e6e6;
+  --muted: #b5b5b5;
+  --card-bg: #141618;
+  --accent: #f5f5f5;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; font-family: "Tajawal", "Noto Naskh Arabic", system-ui, Arial;
+  background:var(--bg); color:var(--text); line-height:1.6;
+}
+
+/* Topbar */
+.topbar{
+  width:100%; display:flex; align-items:center; justify-content:space-between;
+  padding:14px calc((100% - var(--max-width))/2 + 16px);
+  border-bottom:1px solid rgba(0,0,0,0.04);
+  position:sticky; top:0; backdrop-filter: blur(4px); z-index:30;
+  background: linear-gradient(90deg, rgba(255,255,255,0.6), rgba(255,255,255,0));
+}
+[data-theme="dark"] .topbar{ background: linear-gradient(90deg, rgba(15,15,15,0.7), rgba(15,15,15,0.3)); border-bottom-color: rgba(255,255,255,0.03); }
+
+.brand h1{ margin:0; font-size:1.2rem; letter-spacing:1px; color:var(--accent) }
+
+/* container full width central content */
+.container{ max-width:var(--max-width); margin:28px auto; padding:0 16px; width:100%; }
+
+/* hero */
+.hero{ text-align:center; margin-bottom:20px; }
+.hero h2{ margin:6px 0; font-size:2rem; letter-spacing:0.5px }
+.hero .muted{ color:var(--muted); margin-top:6px; }
+
+/* list / grid */
+.list{ display:flex; flex-direction:column; gap:var(--gap); }
+
+/* desktop grid: convert list to grid when width >= 900px */
+@media(min-width:900px){
+  .grid-desktop{ display:grid; grid-template-columns: 1fr 1fr; gap:22px; }
+}
+
+/* card */
+.card{
+  display:flex; gap:14px; background:var(--card-bg); border-radius:var(--radius);
+  overflow:hidden; box-shadow: 0 6px 20px rgba(16,24,40,0.06); border:1px solid rgba(0,0,0,0.03);
+}
+.card .cover{ min-width:220px; width:34%; max-width:360px; height:var(--cover-height); overflow:hidden; flex-shrink:0; background:linear-gradient(180deg,#e9e9e9,#f6f6f6); display:flex; align-items:center; justify-content:center; }
+.card .cover img{ width:100%; height:100%; object-fit:cover; display:block; }
+.card .cover.placeholder{ display:flex; align-items:center; justify-content:center; color:var(--muted); font-size:0.95rem; padding:12px; text-align:center; }
+.card .card-body{ padding:16px; display:flex; flex-direction:column; justify-content:space-between; min-width:0; }
+.card h3{ margin:0 0 8px 0; font-size:1.15rem }
+.card .summary{ margin:0 0 12px 0; color:var(--muted); font-size:0.96rem; max-height:3.6em; overflow:hidden; text-overflow:ellipsis; }
+.card .meta{ display:flex; justify-content:space-between; align-items:center; gap:10px; }
+.btn{ background:var(--accent); color:#fff; padding:8px 12px; border-radius:10px; text-decoration:none; display:inline-block; font-weight:600 }
+
+/* footer */
+.footer{ text-align:center; padding:20px 0; color:var(--muted); margin-top:32px; }
+
+/* chapter/novel pages (generated files use site CSS) */
+.chapter, .novel-card{ background:var(--card-bg); padding:20px; border-radius:14px; box-shadow: 0 6px 18px rgba(16,24,40,0.04); border:1px solid rgba(0,0,0,0.03) }
+
+.chapter p{ white-space:pre-wrap; font-size:1.05rem; line-height:1.85; max-width:var(--content-width); margin:0 auto; }
+
+/* responsive tweaks */
+@media(max-width:900px){
+  .card{ flex-direction:row; }
+  .card .cover{ width:42%; min-width:120px; height:220px }
+}
+@media(max-width:700px){
+  /* mobile: vertical list, covers above text */
+  .card{ flex-direction:column; }
+  .card .cover{ width:100%; height:360px }
+  .card .card-body{ padding:14px }
+  .grid-desktop{ display:flex; flex-direction:column }
+  .hero h2{ font-size:1.5rem }
+}
