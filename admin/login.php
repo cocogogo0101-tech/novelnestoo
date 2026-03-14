@@ -1,46 +1,68 @@
 <?php
-require_once __DIR__ . '/config.php';
-
-// إذا مصفوفة الجلسة موجودة يدخل تلقائياً
-if (isset($_SESSION['novelnest_admin']) && $_SESSION['novelnest_admin'] === true) {
-    header('Location: panel.php'); exit;
-}
+require_once __DIR__.'/config.php';
+if (is_admin()) { header('Location: panel.php'); exit; }
 
 $err = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $pw = $_POST['password'] ?? '';
-    if ($pw === ADMIN_PASSWORD) {
+    if (verify_password($_POST['password'] ?? '')) {
         $_SESSION['novelnest_admin'] = true;
+        $_SESSION['login_time'] = time();
         header('Location: panel.php'); exit;
-    } else {
-        $err = 'الرمز غير صحيح';
     }
+    $err = 'الرمز غير صحيح، حاول مجدداً';
+    sleep(1); // brute-force slowdown
 }
 ?><!doctype html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>دخول لوحة NovelNest</title>
+  <title>دخول — NovelNest Admin</title>
   <link rel="stylesheet" href="../style.css">
-  <style>
-    .login-box{ max-width:400px; margin:80px auto; padding:20px; background:var(--card-bg); border-radius:12px; box-shadow:0 8px 30px rgba(0,0,0,0.06); }
-    .row{ margin-bottom:12px }
-    input[type=password]{ width:100%; padding:10px; border-radius:8px; border:1px solid #ddd; }
-    button{ padding:10px 14px; border-radius:8px; background:var(--accent); color:#fff; border:none }
-    .err{ color:#c33; margin-bottom:8px }
-  </style>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔐</text></svg>">
 </head>
 <body>
-  <main class="container">
-    <div class="login-box">
-      <h2>دخول لوحة التحكم</h2>
-      <?php if ($err): ?><div class="err"><?php echo htmlspecialchars($err); ?></div><?php endif; ?>
-      <form method="post">
-        <div class="row"><input type="password" name="password" placeholder="الرمز السري"></div>
-        <div class="row"><button type="submit">دخول</button></div>
-      </form>
-      <p class="small muted">اللوحة مخفية — استخدم الرابط المباشر فقط.</p>
+<div id="reading-progress"><div id="reading-progress-bar"></div></div>
+<header class="topbar">
+  <a href="../index.php" class="topbar-brand">
+    <div class="topbar-logo">📚</div>
+    <h1>Novel<span>Nest</span></h1>
+  </a>
+  <div class="topbar-actions">
+    <button class="btn-icon" id="theme-toggle" title="تبديل الثيم">☀️</button>
+  </div>
+</header>
+
+<div class="login-page">
+  <div class="login-card">
+    <div class="login-card-header">
+      <div class="login-logo">🔐</div>
+      <h2>لوحة التحكم</h2>
+      <p>أدخل الرمز السري للدخول</p>
     </div>
-  </main>
+    <div class="login-card-body">
+      <?php if ($err): ?>
+        <div class="alert alert-error">❌ <?php echo htmlspecialchars($err); ?></div>
+      <?php endif; ?>
+      <form method="post">
+        <?php echo csrf_field(); ?>
+        <div class="form-row">
+          <label class="form-label">الرمز السري</label>
+          <input type="password" name="password" class="form-input"
+                 placeholder="••••••••" autocomplete="current-password" autofocus>
+        </div>
+        <div class="form-row" style="margin-top:8px">
+          <button type="submit" class="btn btn-gold" style="width:100%;justify-content:center">
+            دخول ←
+          </button>
+        </div>
+      </form>
+      <p class="small text-muted text-center" style="margin-top:16px">
+        اللوحة مخفية — استخدم الرابط المباشر فقط
+      </p>
+    </div>
+  </div>
+</div>
+<div id="toast-container"></div>
+<script src="../script.js"></script>
 </body>
 </html>
